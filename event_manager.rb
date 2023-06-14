@@ -32,13 +32,17 @@ def peak_times(registry_dates)
 
   registry_dates.each do |date|
     time = Time.strptime(date, "%m/%d/%y %H:%M")
-    hour_counts[time.hour] += 1
+    hour_counts[time.strftime("%l%P")] += 1
   end
 
   max_hours = hour_counts.values.max
   peak_hours = hour_counts.select { |_hour, count| count == max_hours}.keys
 
-  [peak_hours]
+  peak_hours.sort_by do |hour|
+    [hour[/\d+/].to_i, hour[/[ap]+m/i]]
+  end
+
+  peak_hours
   #puts "Most Active Hour: #{peak_hours}"
 end
 
@@ -127,5 +131,5 @@ contents.each do |row|
     save_thank_you_letter(id,form_letter)
 end
 
-puts "Most Active Hours: #{all_peak_hours.uniq.sort}"
-puts "Most Active Days: #{all_peak_days.uniq.sort}"
+puts "Most Active Hours: #{all_peak_hours.uniq.sort_by { |hour| [hour.include?("am") ? 0 : 1, hour] }}"
+#puts "Most Active Days: #{all_peak_days.uniq."
