@@ -28,17 +28,17 @@ end
 def peak_times(registry_dates)
   hour_counts = Hash.new(0)
 
+  # Count the occurrences of each hour
   registry_dates.each do |date|
     time = Time.strptime(date, "%m/%d/%y %H:%M")
     hour_counts[time.strftime("%l%P")] += 1
   end
 
+  # Find the maximum occurrence count
   max_hours = hour_counts.values.max
-  peak_hours = hour_counts.select { |_hour, count| count == max_hours}.keys
 
-  peak_hours.sort_by do |hour|
-    [hour[/\d+/].to_i, hour[/[ap]+m/i]]
-  end
+  # Select the hours with the maximum occurrence count
+  peak_hours = hour_counts.select { |_hour, count| count == max_hours }.keys
 
   peak_hours
 end
@@ -46,16 +46,21 @@ end
 def registration_days(registry_dates)
   day_counts = Hash.new(0)
 
+  # Count the occurrences of each day
   registry_dates.each do |date|
     time = Time.strptime(date, "%m/%d/%y %H:%M")
     day_counts[time.strftime("%A")] += 1
   end
 
+  # Find the maximum occurrence count
   max_days = day_counts.values.max
-  peak_days = day_counts.select { |_day, count| count == max_days}.keys
+
+  # Select the days with the maximum occurrence count
+  peak_days = day_counts.select { |_day, count| count == max_days }.keys
 
   reg_days = peak_days.uniq
 end
+
 
 
 def legislators_by_zipcode(zip)
