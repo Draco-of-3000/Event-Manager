@@ -132,5 +132,5 @@ contents.each do |row|
     save_thank_you_letter(id,form_letter)
 end
 
-puts "Most Active Hours: #{all_peak_hours.uniq.sort_by { |hour| [hour.include?("am") ? 0 : 1, hour] }}"
-puts "Most Active Days: #{all_peak_days.uniq}"
+#puts "Most Active Hours: #{all_peak_hours.uniq.sort_by { |hour| [hour.include?("am") ? 0 : 1, hour] }}"
+#puts "Most Active Days: #{all_peak_days.uniq}"
