@@ -1,6 +1,8 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'time'
+require 'date'
 
 
 def clean_zipcode(zipcode)
@@ -22,6 +24,38 @@ def clean_number(number)
     number
   end
 end
+
+
+def peak_times(registry_dates)
+  hour_counts = Hash.new(0)
+
+  registry_dates.each do |date|
+    time = Time.strptime(date, "%m/%d/%y %H:%M")
+    hour_counts[time.hour] += 1
+  end
+
+  max_hours = hour_counts.values.max
+  peak_hours = hour_counts.select { |_hour, count| count == max_hours}.keys
+
+  [peak_hours]
+  puts "Most Active Hours: #{peak_hours}"
+end
+
+def registration_days(registry_dates)
+  day_counts = Hash.new(0)
+
+  registry_dates.each do |date|
+    time = Time.strptime(date, "%m/%d/%y %H:%M")
+    day_counts[time.strftime("%A")] += 1
+  end
+
+  max_days = day_counts.values.max
+  peak_days = day_counts.select { |_day, count| count == max_days}.keys
+
+  reg_days = peak_days.uniq
+  puts "Most Active Days: #{reg_days}"
+end
+
 
 def legislators_by_zipcode(zip)
     civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
@@ -68,6 +102,12 @@ contents.each do |row|
     name = row[:first_name]
     zipcode = row[:zipcode]
     number = row[:homephone]
+    registry_dates = row[:regdate].split(',') 
+    
+    peak_times(registry_dates)
+    registration_days(registry_dates)
+
+    #puts registry_dates
 
     zipcode = clean_zipcode(zipcode)
 
@@ -78,7 +118,5 @@ contents.each do |row|
     form_letter = erb_template.result(binding)
 
     save_thank_you_letter(id,form_letter)
-
-    puts "#{name} #{zipcode} #{legislators} #{number}"
 end
 
