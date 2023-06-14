@@ -3,6 +3,7 @@ require 'google/apis/civicinfo_v2'
 require 'erb'
 require 'time'
 require 'date'
+require 'pry-byebug'
 
 
 def clean_zipcode(zipcode)
@@ -38,7 +39,7 @@ def peak_times(registry_dates)
   peak_hours = hour_counts.select { |_hour, count| count == max_hours}.keys
 
   [peak_hours]
-  puts "Most Active Hours: #{peak_hours}"
+  #puts "Most Active Hour: #{peak_hours}"
 end
 
 def registration_days(registry_dates)
@@ -53,7 +54,7 @@ def registration_days(registry_dates)
   peak_days = day_counts.select { |_day, count| count == max_days}.keys
 
   reg_days = peak_days.uniq
-  puts "Most Active Days: #{reg_days}"
+  #puts "Most Active Day: #{reg_days}"
 end
 
 
@@ -97,6 +98,9 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 
+all_peak_hours = []
+all_peak_days = []
+
 contents.each do |row|
     id = row[0]
     name = row[:first_name]
@@ -104,8 +108,11 @@ contents.each do |row|
     number = row[:homephone]
     registry_dates = row[:regdate].split(',') 
     
-    peak_times(registry_dates)
-    registration_days(registry_dates)
+    peak_hours = peak_times(registry_dates)
+    reg_days = registration_days(registry_dates)
+
+    all_peak_hours.concat(peak_hours)
+    all_peak_days.concat(reg_days)
 
     #puts registry_dates
 
@@ -120,3 +127,5 @@ contents.each do |row|
     save_thank_you_letter(id,form_letter)
 end
 
+puts "Most Active Hours: #{all_peak_hours.uniq.sort}"
+puts "Most Active Days: #{all_peak_days.uniq.sort}"
