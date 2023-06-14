@@ -2,8 +2,6 @@ require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
 require 'time'
-require 'date'
-require 'pry-byebug'
 
 
 def clean_zipcode(zipcode)
@@ -43,7 +41,6 @@ def peak_times(registry_dates)
   end
 
   peak_hours
-  #puts "Most Active Hour: #{peak_hours}"
 end
 
 def registration_days(registry_dates)
@@ -58,7 +55,6 @@ def registration_days(registry_dates)
   peak_days = day_counts.select { |_day, count| count == max_days}.keys
 
   reg_days = peak_days.uniq
-  #puts "Most Active Day: #{reg_days}"
 end
 
 
@@ -132,4 +128,4 @@ contents.each do |row|
 end
 
 puts "Most Active Hours: #{all_peak_hours.uniq.sort_by { |hour| [hour.include?("am") ? 0 : 1, hour] }}"
-#puts "Most Active Days: #{all_peak_days.uniq."
+puts "Most Active Days: #{all_peak_days.uniq}"
